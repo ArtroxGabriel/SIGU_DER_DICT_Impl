@@ -63,6 +63,7 @@ especialistas da área, você identificou os seguintes requisitos:
 - [ ] Diagrama de Entidade-Relacionamento
       [link](https://drive.google.com/file/d/1d5QVytJ5FTKQcfxB-y4UmwTDte_qbcFN/view?usp=sharing)
 - [ ] Dicionário de Dados
+      [link](https://docs.google.com/document/d/1Nac5SGUzuzNW0clQiOZ88Pjdayu9FqIlY678wP7v-E8/edit?usp=sharing)
 - [ ] Implementação do Banco de Dados
       [Query de Criaçao](./src/create)
 - [ ] Inserção de dados
