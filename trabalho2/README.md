@@ -51,11 +51,29 @@ PRIMARY KEY (aluno id, turma id)`
 ### 2.3 Inserção de Dados
 
 - Curso
+  
+![image](https://github.com/user-attachments/assets/23299812-e345-4981-985d-9b1243abc74c)
+
 - Aluno
+  
+![image](https://github.com/user-attachments/assets/b1868429-70b8-48b1-9fc5-990ed57ed3c4)
+
 - Professor
+  
+![image](https://github.com/user-attachments/assets/d8a30484-8116-48d3-a499-18e2f09ea3a9)
+
 - Disciplina
+  
+![image](https://github.com/user-attachments/assets/e0fcda7c-e636-4e61-a70d-07bcb69af3aa)
+
 - Turma
+  
+![image](https://github.com/user-attachments/assets/a44bbe23-f79f-4f6d-a5c8-b92c3f6aceae)
+
 - ALuno_Turma
+  
+![image](https://github.com/user-attachments/assets/0042604d-7d0c-4dfd-a83b-695448f16e74)
+
 
 ### 2.4 Consulta
 
@@ -84,10 +102,16 @@ transaçao:
 
 1. Usando PL/pgSQL, implemente um gatilho no banco de dados que dispara toda vez
    que um aluno ́e adicionado a uma turma. O gatilho deve garantir que o número de
-   alunos matriculados em uma turma não exceda a capacidade m ́axima da mesma.
+   alunos matriculados em uma turma não exceda a capacidade máxima da mesma.
 2. Usando PL/pgSQL, crie um segundo gatilho que restrinja um aluno a não cursar
-   mais do que 4 disciplinas em um semestre. 3.
+   mais do que 4 disciplinas em um semestre.
+
+![image](https://github.com/user-attachments/assets/3fd12d77-c935-4e86-bf44-43c391599952)
+
 3. Escreva um script em Python que tenta inserir as tuplas na Tabela “Aluno Turma”
    como descrito na Tabela 7
+
+![image](https://github.com/user-attachments/assets/c55b3d8c-f4a5-4fe9-acbf-d5808007599b)
+
 4. Escreva um script em Python que tenta inserir as tuplas na Tabela “Aluno Turma”
    como descrito na Tabela 8
