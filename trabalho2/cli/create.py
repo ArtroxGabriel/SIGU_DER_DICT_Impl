@@ -1,5 +1,11 @@
-from logging import Logger
 from psycopg import Cursor, sql
+import psycopg
+
+
+USER_NAME = "postgres"
+USER_PWD = "postgres"
+DB_HOST = "localhost"  # "200.129.44.249"
+DB_NAME = "teste_db"
 
 
 def __create_tables(cur: Cursor, table_name: str, attributes) -> None:
@@ -12,15 +18,15 @@ def __create_tables(cur: Cursor, table_name: str, attributes) -> None:
     cur.execute(create_table_query)
 
 
-def create_tables(logger: Logger, cur: Cursor) -> None:
-    logger.info("Starting to delete tables if they exist")
+def create_tables(cur: Cursor) -> None:
+    print("Dropping tables if exists")
     drop_tables_query = sql.SQL("""
-        DROP TABLE IF EXISTS Aluno_Turma CASCADE;
-        DROP TABLE IF EXISTS Turma CASCADE;
-        DROP TABLE IF EXISTS Disciplina CASCADE;
-        DROP TABLE IF EXISTS Professor CASCADE;
-        DROP TABLE IF EXISTS Aluno CASCADE;
-        DROP TABLE IF EXISTS Curso CASCADE;
+        DROP TABLE IF EXISTS aluno_turma CASCADE;
+        DROP TABLE IF EXISTS turma CASCADE;
+        DROP TABLE IF EXISTS disciplina CASCADE;
+        DROP TABLE IF EXISTS professor CASCADE;
+        DROP TABLE IF EXISTS aluno CASCADE;
+        DROP TABLE IF EXISTS curso CASCADE;
     """)
     cur.execute(drop_tables_query)
 
@@ -86,10 +92,16 @@ def create_tables(logger: Logger, cur: Cursor) -> None:
         ),
     ]
 
-    logger.info("Starting creation of {} tables".format(len(tables)))
+    print("Starting create tables")
     for table_name, attributes in tables:
-        logger.info("Creating the '{}' table".format(table_name))
         __create_tables(cur, table_name, attributes)
+    print("Tables Created Successfully!")
 
-    # Commitando uma única transação
-    logger.info("Tables Created succesfully")
+
+if __name__ == "__main__":
+    with psycopg.connect(
+        f"host={DB_HOST} dbname={DB_NAME} user={USER_NAME} password={USER_PWD}",
+        autocommit=True,
+    ) as conn:
+        with conn.cursor() as cur:
+            create_tables(cur)

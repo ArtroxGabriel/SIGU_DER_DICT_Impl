@@ -1,6 +1,11 @@
-from logging import Logger
 from psycopg import Cursor
 from psycopg import sql
+import psycopg
+
+USER_NAME = "postgres"
+USER_PWD = "postgres"
+DB_HOST = "localhost"  # "200.129.44.249"
+DB_NAME = "teste_db"
 
 
 def __get_classroom_and_quantity_participants(cur: Cursor) -> None:
@@ -96,16 +101,23 @@ WHERE
         print(format_row(row))
 
 
-def run_queries(logger: Logger, cur: Cursor) -> None:
-    logger.info("Running query to get classroom and their number of participants")
+def run_queries(cur: Cursor) -> None:
+    print("Running query to get classroom and their number of participants")
     __get_classroom_and_quantity_participants(cur)
 
-    logger.info(
-        "Running query to get students of Discipline 'Fundamentos de Banco de Dados'"
-    )
+    print("Running query to get students of Discipline 'Fundamentos de Banco de Dados'")
     __get_students_from_discipline(cur, "Fundamentos de Bancos de Dados")
 
-    logger.info(
+    print(
         "Running query to get number of teachers of the course 'Ciências da Computação'"
     )
     __num_of_teachers_by_course(cur, "Ciências da Computação")
+
+
+if __name__ == "__main__":
+    with psycopg.connect(
+        f"host={DB_HOST} dbname={DB_NAME} user={USER_NAME} password={USER_PWD}",
+        autocommit=True,
+    ) as conn:
+        with conn.cursor() as cur:
+            run_queries(cur)

@@ -1,5 +1,10 @@
-from logging import Logger
 from psycopg import Cursor, sql
+import psycopg
+
+USER_NAME = "postgres"
+USER_PWD = "postgres"
+DB_HOST = "localhost"  # "200.129.44.249"
+DB_NAME = "teste_db"
 
 
 def __insert_data(cur: Cursor, table_name: str, values_list: list) -> None:
@@ -13,7 +18,7 @@ def __insert_data(cur: Cursor, table_name: str, values_list: list) -> None:
         cur.execute(insert_query, tuple(values.values()))
 
 
-def insert_data(logger: Logger, cur: Cursor) -> None:
+def populate_tables(cur: Cursor) -> None:
     data_table = [
         [
             "curso",
@@ -254,9 +259,17 @@ def insert_data(logger: Logger, cur: Cursor) -> None:
             ],
         ],
     ]
-    logger.info("Starting data insertion")
+
+    print("Starting populate tables")
     for data in data_table:
-        logger.info(
-            "Inserting {} record(s) into the '{}' table".format(len(data[1]), data[0])
-        )
         __insert_data(cur, data[0], data[1])
+    print("Table populated Succesfully")
+
+
+if __name__ == "__main__":
+    with psycopg.connect(
+        f"host={DB_HOST} dbname={DB_NAME} user={USER_NAME} password={USER_PWD}",
+        autocommit=True,
+    ) as conn:
+        with conn.cursor() as cur:
+            populate_tables(cur)
