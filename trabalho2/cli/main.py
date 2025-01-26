@@ -3,6 +3,7 @@ import psycopg
 
 from create_tables import create_tables
 from insert_data import insert_data
+from queries import run_queries
 
 USER_NAME = "postgres"
 USER_PWD = "postgres"
@@ -19,8 +20,10 @@ if __name__ == "__main__":
     logger.addHandler(console_handler)
 
     with psycopg.connect(
-        f"host={DB_HOST} dbname={DB_NAME} user={USER_NAME} password={USER_PWD}"
+        f"host={DB_HOST} dbname={DB_NAME} user={USER_NAME} password={USER_PWD}",
+        autocommit=True,
     ) as conn:
         with conn.cursor() as cur:
-            create_tables(logger, conn, cur)
-            insert_data(logger, conn, cur)
+            create_tables(logger, cur)
+            insert_data(logger, cur)
+            run_queries(logger, cur)

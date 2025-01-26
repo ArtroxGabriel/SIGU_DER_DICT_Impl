@@ -1,10 +1,8 @@
 from logging import Logger
-from psycopg import Connection, Cursor, sql
+from psycopg import Cursor, sql
 
 
-def __insert_data(
-    conn: Connection, cur: Cursor, table_name: str, values_list: list
-) -> None:
+def __insert_data(cur: Cursor, table_name: str, values_list: list) -> None:
     placeholders = sql.SQL(", ").join(sql.Placeholder() for _ in values_list[0])
 
     insert_query = sql.SQL("""
@@ -13,10 +11,9 @@ def __insert_data(
 
     for values in values_list:
         cur.execute(insert_query, tuple(values.values()))
-    conn.commit()
 
 
-def insert_data(logger: Logger, conn: Connection, cur: Cursor) -> None:
+def insert_data(logger: Logger, cur: Cursor) -> None:
     data_table = [
         [
             "curso",
@@ -262,4 +259,4 @@ def insert_data(logger: Logger, conn: Connection, cur: Cursor) -> None:
         logger.info(
             "Inserting {} record(s) into the '{}' table".format(len(data[1]), data[0])
         )
-        __insert_data(conn, cur, data[0], data[1])
+        __insert_data(cur, data[0], data[1])

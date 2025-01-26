@@ -1,11 +1,5 @@
 from logging import Logger
-from psycopg import Connection, Cursor, sql
-
-
-USER_NAME = "postgres"
-USER_PWD = "postgres"
-DB_HOST = "localhost"  # "200.129.44.249"
-DB_NAME = "teste_db"
+from psycopg import Cursor, sql
 
 
 def __create_tables(cur: Cursor, table_name: str, attributes) -> None:
@@ -18,7 +12,7 @@ def __create_tables(cur: Cursor, table_name: str, attributes) -> None:
     cur.execute(create_table_query)
 
 
-def create_tables(logger: Logger, conn: Connection, cur: Cursor) -> None:
+def create_tables(logger: Logger, cur: Cursor) -> None:
     logger.info("Starting to delete tables if they exist")
     drop_tables_query = sql.SQL("""
         DROP TABLE IF EXISTS Aluno_Turma CASCADE;
@@ -99,4 +93,3 @@ def create_tables(logger: Logger, conn: Connection, cur: Cursor) -> None:
 
     # Commitando uma única transação
     logger.info("Tables Created succesfully")
-    conn.commit()
