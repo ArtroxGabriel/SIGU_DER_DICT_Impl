@@ -1,106 +1,265 @@
-import psycopg
-
-USER_NAME = "postgres"
-USER_PWD = "postgres"
-DB_HOST = "localhost"  # "200.129.44.249"
-DB_NAME = "teste_db"
+from logging import Logger
+from psycopg import Connection, Cursor, sql
 
 
-def insert_data(table, data) -> None:
-    with psycopg.connect(
-        f"postgres://{USER_NAME}:{USER_PWD}@{DB_HOST}/{DB_NAME}"
-    ) as conn:
-        # Open a cursor to perform database operations
-        with conn.cursor() as cur:
-            print(f"Inserting data in table {table}")
-            cur.execute(data)
+def __insert_data(
+    conn: Connection, cur: Cursor, table_name: str, values_list: list
+) -> None:
+    placeholders = sql.SQL(", ").join(sql.Placeholder() for _ in values_list[0])
 
-            conn.commit()
+    insert_query = sql.SQL("""
+        INSERT INTO {table} VALUES ({placeholders})
+    """).format(table=sql.Identifier(table_name), placeholders=placeholders)
+
+    for values in values_list:
+        cur.execute(insert_query, tuple(values.values()))
+    conn.commit()
 
 
-if __name__ == "__main__":
-    datas = [
+def insert_data(logger: Logger, conn: Connection, cur: Cursor) -> None:
+    data_table = [
         [
-            "Curso",
-            """
-INSERT INTO
-	Curso
-VALUES
-	(1, 'Ciências da Computação', 'Semestral', 8),
-	(2, 'Engenharia de Software', 'Anual', 10),
-	(3, 'Sistemas de Informação', 'Semestral', 8)
-    """,
+            "curso",
+            [
+                {
+                    "id": 1,
+                    "nome": "Ciências da Computação",
+                    "regime": "Semestral",
+                    "duracao": 8,
+                },
+                {
+                    "id": 2,
+                    "nome": "Engenharia de Software",
+                    "regime": "Anual",
+                    "duracao": 10,
+                },
+                {
+                    "id": 3,
+                    "nome": "Sistemas de Informação",
+                    "regime": "Semestral",
+                    "duracao": 8,
+                },
+            ],
         ],
         [
-            "Aluno",
-            """
-INSERT INTO
-	Aluno
-VALUES
-	(1, 'João Silva', 1, 1),
-	(2, 'Maria Costa', 1, 1),
-	(3, 'Ana Souza', 3, 5),
-	(4, 'Pedro Almeida', 2, 3),
-	(5, 'Lucas Santos', 2, 3)
-    """,
+            "aluno",
+            [
+                {
+                    "id": 1,
+                    "nome": "João Silva",
+                    "curso_id": 1,
+                    "semestrel": 1,
+                },
+                {
+                    "id": 2,
+                    "nome": "Maria Costa",
+                    "curso_id": 1,
+                    "semestrel": 1,
+                },
+                {
+                    "id": 3,
+                    "nome": "Ana Souza",
+                    "curso_id": 3,
+                    "semestrel": 5,
+                },
+                {
+                    "id": 4,
+                    "nome": "Pedro Almeida",
+                    "curso_id": 2,
+                    "semestrel": 3,
+                },
+                {
+                    "id": 5,
+                    "nome": "Lucas Santos",
+                    "curso_id": 2,
+                    "semestrel": 3,
+                },
+            ],
         ],
         [
-            "Professor",
-            """
-INSERT INTO
-	professor
-VALUES
-	(1, 'Maria Oliveira', 'Banco de Dados', 'maria@ufc.br', 1),
-	(2, 'João Pereira', 'Redes de Computadores', 'joao@ufc.br', 2),
-	(3, 'Ana Silva', 'Inteligência Artificial', 'ana@ufc.br', 3),
-	(4, 'Paulo Santos', 'Engenharia de Software', 'paulo@ufc.br', 2),
-	(5, 'Carla Mendes', 'Redes de Computadores', 'carla@ufc.br', 1)
-    """,
+            "professor",
+            [
+                {
+                    "id": 1,
+                    "nome": "Maria Oliveira",
+                    "area especializacao": "Banco de Dados",
+                    "contato": "maria@ufc.br",
+                    "curso_id": 1,
+                },
+                {
+                    "id": 2,
+                    "nome": "João Pereira",
+                    "area especializacao": "Redes de Computadores",
+                    "contato": "joao@ufc.br",
+                    "curso_id": 2,
+                },
+                {
+                    "id": 3,
+                    "nome": "Ana Silva",
+                    "area especializacao": "Inteligência Artificial",
+                    "contato": "ana@ufc.br",
+                    "curso_id": 3,
+                },
+                {
+                    "id": 4,
+                    "nome": "Paulo Santos",
+                    "area especializacao": "Engenharia de Software",
+                    "contato": "paulo@ufc.br",
+                    "curso_id": 2,
+                },
+                {
+                    "id": 5,
+                    "nome": "Carla Mendes",
+                    "area especializacao": "Redes de Computadores",
+                    "contato": "carla@ufc.br",
+                    "curso_id": 1,
+                },
+            ],
         ],
         [
-            "Disciplina",
-            """
-INSERT INTO
-	disciplina
-VALUES
-	(1, 'BD001', 'Fundamentos de Bancos de Dados', 'Banco de Dados', 60, 1),
-	(2, 'IA002', 'Inteligência Computacional Aplicada', 'Inteligência Artificial', 80, 3),
-	(3, 'RS003', 'Seguran ̧ca da Informação', 'Redes de Computadores', 40, 2),
-	(4, 'BD004', 'Introdução a Ciência de Dados', 'Banco de Dados', 60, 1),
-	(5, 'ES005', 'Qualidade de Software', 'Engenharia de Software', 50, 2)
-    """,
+            "disciplina",
+            [
+                {
+                    "id": 1,
+                    "codigo": "BD001",
+                    "nome": "Fundamentos de Bancos de Dados",
+                    "area especializacao": "Banco de Dados",
+                    "carga_horaria": 60,
+                    "curso_id": 1,
+                },
+                {
+                    "id": 2,
+                    "codigo": "IA002",
+                    "nome": "Inteligência Computacional Aplicada",
+                    "area especializacao": "Inteligência Artificial",
+                    "carga_horaria": 80,
+                    "curso_id": 3,
+                },
+                {
+                    "id": 3,
+                    "codigo": "RS003",
+                    "nome": "Segurança da Informação",
+                    "area especializacao": "Redes de Computadores",
+                    "carga_horaria": 40,
+                    "curso_id": 2,
+                },
+                {
+                    "id": 4,
+                    "codigo": "BD004",
+                    "nome": "Introdução a Ciência de Dados",
+                    "area especializacao": "Banco de Dados",
+                    "carga_horaria": 60,
+                    "curso_id": 1,
+                },
+                {
+                    "id": 5,
+                    "codigo": "ES005",
+                    "nome": "Qualidade de Software",
+                    "area especializacao": "Engenharia de Software",
+                    "carga_horaria": 50,
+                    "curso_id": 2,
+                },
+            ],
         ],
         [
-            "Turma",
-            """
-INSERT INTO
-	Turma
-VALUES
-	(1, 'CC2024BD1', 1, '2024.2', 4, 'Aberta', 1),
-	(2, 'CC2024IA1', 2, '2024.2', 4, 'Aberta', 3),
-	(3, 'CC2024RS1', 3, '2024.1', 8, 'Aberta', 2),
-	(4, 'CC2024DS1', 4, '2024.2', 4, 'Aberta', 1),
-	(5, 'CC2024ES1', 5, '2024.2', 8, 'Aberta', 4)
-            """,
+            "turma",
+            [
+                {
+                    "id": 1,
+                    "codigo": "CC2024BD1",
+                    "disciplina_id": 1,
+                    "semestre": "2024.2",
+                    "capacidade_maxima": 4,
+                    "estado": "Aberta",
+                    "prof_id": 1,
+                },
+                {
+                    "id": 2,
+                    "codigo": "CC2024IA1",
+                    "disciplina_id": 2,
+                    "semestre": "2024.2",
+                    "capacidade_maxima": 4,
+                    "estado": "Aberta",
+                    "prof_id": 3,
+                },
+                {
+                    "id": 3,
+                    "codigo": "CC2024RS1",
+                    "disciplina_id": 3,
+                    "semestre": "2024.1",
+                    "capacidade_maxima": 8,
+                    "estado": "Aberta",
+                    "prof_id": 2,
+                },
+                {
+                    "id": 4,
+                    "codigo": "CC2024DS1",
+                    "disciplina_id": 4,
+                    "semestre": "2024.2",
+                    "capacidade_maxima": 4,
+                    "estado": "Aberta",
+                    "prof_id": 1,
+                },
+                {
+                    "id": 5,
+                    "codigo": "CC2024ES1",
+                    "disciplina_id": 5,
+                    "semestre": "2024.2",
+                    "capacidade_maxima": 8,
+                    "estado": "Aberta",
+                    "prof_id": 4,
+                },
+            ],
         ],
         [
-            "Aluno_Turma",
-            """
-INSERT INTO
-	aluno_turma
-VALUES
-	(1, 1),
-	(2, 1),
-	(3, 2),
-	(4, 3),
-	(5, 4),
-	(1, 5),
-	(2, 4),
-	(3, 5),
-	(4, 2),
-	(5, 3)
-            """,
+            "aluno_turma",
+            [
+                {
+                    "aluno_id": 1,
+                    "turma_id": 1,
+                },
+                {
+                    "aluno_id": 2,
+                    "turma_id": 1,
+                },
+                {
+                    "aluno_id": 3,
+                    "turma_id": 2,
+                },
+                {
+                    "aluno_id": 4,
+                    "turma_id": 3,
+                },
+                {
+                    "aluno_id": 5,
+                    "turma_id": 4,
+                },
+                {
+                    "aluno_id": 1,
+                    "turma_id": 5,
+                },
+                {
+                    "aluno_id": 2,
+                    "turma_id": 4,
+                },
+                {
+                    "aluno_id": 3,
+                    "turma_id": 5,
+                },
+                {
+                    "aluno_id": 4,
+                    "turma_id": 2,
+                },
+                {
+                    "aluno_id": 5,
+                    "turma_id": 3,
+                },
+            ],
         ],
     ]
-    for data in datas:
-        insert_data(data[0], data[1])
+    logger.info("Starting data insertion")
+    for data in data_table:
+        logger.info(
+            "Inserting {} record(s) into the '{}' table".format(len(data[1]), data[0])
+        )
+        __insert_data(conn, cur, data[0], data[1])
