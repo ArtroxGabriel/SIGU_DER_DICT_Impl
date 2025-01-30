@@ -50,8 +50,3 @@ BEFORE INSERT
 ON aluno_turma
 FOR EACH ROW
 EXECUTE FUNCTION limit_courses_per_student();
-
-
-
-
-

@@ -20,7 +20,11 @@ GROUP BY
 	t.id
     """
 
-    cur.execute(select_query)
+    try:
+        cur.execute(select_query)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
     record = cur.fetchall()
 
     header = ["cod_turma", "num_participantes"]
@@ -52,7 +56,11 @@ WHERE
 	d.nome LIKE {}
     """).format(discipline)
 
-    cur.execute(select_query)
+    try:
+        cur.execute(select_query)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
     record = cur.fetchall()
 
     header = ["id", "nome"]
@@ -81,7 +89,11 @@ WHERE
 	c.nome LIKE {}
     """).format(course)
 
-    cur.execute(select_query)
+    try:
+        cur.execute(select_query)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
     record = cur.fetchall()
 
     header = ["numero_professores"]

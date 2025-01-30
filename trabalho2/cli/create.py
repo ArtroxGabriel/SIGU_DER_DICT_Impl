@@ -15,7 +15,10 @@ def __create_tables(cur: Cursor, table_name: str, attributes) -> None:
         )
     """).format(table=sql.Identifier(table_name), columns=sql.SQL(attributes))
 
-    cur.execute(create_table_query)
+    try:
+        cur.execute(create_table_query)
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
 def create_tables(cur: Cursor) -> None:
@@ -28,7 +31,10 @@ def create_tables(cur: Cursor) -> None:
         DROP TABLE IF EXISTS aluno CASCADE;
         DROP TABLE IF EXISTS curso CASCADE;
     """)
-    cur.execute(drop_tables_query)
+    try:
+        cur.execute(drop_tables_query)
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
     tables = [
         (

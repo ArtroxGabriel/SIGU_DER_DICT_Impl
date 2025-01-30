@@ -14,8 +14,11 @@ def __insert_data(cur: Cursor, table_name: str, values_list: list) -> None:
         INSERT INTO {table} VALUES ({placeholders})
     """).format(table=sql.Identifier(table_name), placeholders=placeholders)
 
-    for values in values_list:
-        cur.execute(insert_query, tuple(values.values()))
+    try:
+        for values in values_list:
+            cur.execute(insert_query, tuple(values.values()))
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
 def populate_tables(cur: Cursor) -> None:
