@@ -2,10 +2,10 @@ from psycopg import Cursor
 from psycopg import sql
 import psycopg
 
-USER_NAME = "postgres"
-USER_PWD = "postgres"
-DB_HOST = "localhost"  # "200.129.44.249"
-DB_NAME = "teste_db"
+USER_NAME = "539628"
+USER_PWD = "539628"
+DB_HOST = "200.129.44.249"
+DB_NAME = "antgabriel_539628_ed1"
 
 
 def __get_classroom_and_quantity_participants(cur: Cursor) -> None:
